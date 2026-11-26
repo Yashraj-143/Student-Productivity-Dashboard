@@ -1,0 +1,1904 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light" data-bs-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Student Productivity Dashboard</title>
+
+  <!-- Favicons -->
+  <link rel="icon" href="assets/favicon.ico" sizes="any">
+  <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="assets/favicon-16.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="assets/favicon-256.png">
+
+  <!-- Bootstrap 5.3 CSS via CDN -->
+  <link
+    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+    rel="stylesheet"
+    integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
+    crossorigin="anonymous"
+  >
+
+  <!-- Bootstrap Icons via CDN -->
+  <link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
+  >
+
+  <!-- Custom Stylesheet -->
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div class="app-shell">
+    <!-- Fixed Sidebar (Desktop) / Collapsible Drawer (Mobile) -->
+    <aside
+      class="sidebar offcanvas-lg offcanvas-start"
+      tabindex="-1"
+      id="appSidebar"
+      aria-labelledby="sidebarLabel"
+    >
+      <div class="sidebar-header">
+        <a href="#dashboard" class="brand-link" id="sidebarLabel">
+          <span class="brand-mark" aria-hidden="true">
+            <i class="bi bi-journal-bookmark"></i>
+          </span>
+          <span class="brand-title">StudyFlow</span>
+        </a>
+        <button
+          type="button"
+          class="btn-close d-lg-none"
+          data-bs-dismiss="offcanvas"
+          data-bs-target="#appSidebar"
+          aria-label="Close navigation"
+        ></button>
+      </div>
+
+      <nav class="sidebar-nav" aria-label="Main navigation">
+        <div class="nav-group-label">Workspace</div>
+        <ul class="nav flex-column">
+          <li class="nav-item">
+            <a href="#dashboard" class="nav-link active" data-section="dashboard" aria-current="page">
+              <i class="bi bi-house"></i>
+              <span>Overview</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="#tasks" class="nav-link" data-section="tasks">
+              <i class="bi bi-check2-square"></i>
+              <span>Tasks</span>
+              <span class="nav-badge" id="sidebarPendingBadge">0</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="#calendar" class="nav-link" data-section="calendar">
+              <i class="bi bi-calendar3"></i>
+              <span>Calendar</span>
+            </a>
+          </li>
+        </ul>
+
+        <div class="nav-group-label mt-2">Study</div>
+        <ul class="nav flex-column">
+          <li class="nav-item">
+            <a href="#timetable" class="nav-link" data-section="timetable">
+              <i class="bi bi-clock"></i>
+              <span>Timetable</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="#study-sessions" class="nav-link" data-section="study-sessions">
+              <i class="bi bi-stopwatch"></i>
+              <span>Study Sessions</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="#subjects" class="nav-link" data-section="subjects">
+              <i class="bi bi-book"></i>
+              <span>Subjects</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="#notes" class="nav-link" data-section="notes">
+              <i class="bi bi-file-text"></i>
+              <span>Notes</span>
+            </a>
+          </li>
+        </ul>
+
+        <div class="nav-group-label mt-2">Personal</div>
+        <ul class="nav flex-column">
+          <li class="nav-item">
+            <a href="#goals" class="nav-link" data-section="goals">
+              <i class="bi bi-bullseye"></i>
+              <span>Goals</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="#analytics" class="nav-link" data-section="analytics">
+              <i class="bi bi-bar-chart"></i>
+              <span>Analytics</span>
+            </a>
+          </li>
+        </ul>
+      </nav>
+
+      <div class="sidebar-footer">
+        <a href="#settings" class="nav-link sidebar-settings-link" data-section="settings">
+          <i class="bi bi-gear"></i>
+          <span>Settings</span>
+        </a>
+        <div class="student-card mt-2">
+          <div class="student-avatar" id="studentAvatar" aria-hidden="true">AR</div>
+          <div class="student-meta">
+            <div class="student-name" id="sidebarStudentName">Alex Rivera</div>
+            <div class="student-term" id="sidebarStudentTerm">B.S. Computer Science &middot; Fall</div>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Content Wrapper -->
+    <div class="main-wrapper">
+      <!-- Minimal Topbar -->
+      <header class="topbar">
+        <div class="topbar-left">
+          <button
+            class="btn btn-icon d-lg-none"
+            type="button"
+            data-bs-toggle="offcanvas"
+            data-bs-target="#appSidebar"
+            aria-controls="appSidebar"
+            aria-label="Open navigation menu"
+          >
+            <i class="bi bi-list"></i>
+          </button>
+          <div class="topbar-breadcrumb">
+            <span class="breadcrumb-root">Dashboard</span>
+            <span class="breadcrumb-sep" aria-hidden="true">/</span>
+            <span class="breadcrumb-current" id="currentSectionTitle">Overview</span>
+          </div>
+        </div>
+
+        <div class="topbar-right">
+          <span class="topbar-timer-text d-none" id="activeSessionPill"></span>
+          <button
+            type="button"
+            class="btn btn-icon"
+            id="openStudyQuickBtn"
+            aria-label="Open study session timer"
+            title="Study timer"
+          >
+            <i class="bi bi-stopwatch"></i>
+          </button>
+          <div class="student-avatar student-avatar-sm" id="topbarAvatar" aria-hidden="true">AR</div>
+        </div>
+      </header>
+
+      <!-- Main Dashboard Content -->
+      <main class="main-content" id="mainContent">
+        <!-- Dashboard View -->
+        <section id="dashboardView" class="dashboard-view" aria-label="Dashboard overview">
+          <!-- Quiet Editorial Header (Directly on Page Background) -->
+          <header class="editorial-header">
+            <div class="editorial-header-text">
+              <div class="date-eyebrow" id="currentDateText"></div>
+              <h1 class="greeting-title" id="greetingTitle"></h1>
+              <p class="greeting-subtitle mb-3" id="motivationalMessage"></p>
+              <div class="editorial-header-actions">
+                <button type="button" class="btn btn-accent" data-action="open-task-modal">
+                  <span>+ Add task</span>
+                </button>
+                <button type="button" class="btn-link-muted" data-action="open-study-modal">
+                  Start session
+                </button>
+                <button type="button" class="btn-link-muted" data-action="open-note-modal">
+                  Add note
+                </button>
+              </div>
+            </div>
+          </header>
+
+          <!-- Compact Horizontal Summary -->
+          <div class="compact-summary-bar" aria-label="Today's summary">
+            <span class="summary-inline-item"><strong id="summaryTotalTasks">0</strong> tasks today</span>
+            <span class="summary-dot" aria-hidden="true">&middot;</span>
+            <span class="summary-inline-item"><strong id="summaryCompletedTasks">0</strong> completed</span>
+            <span class="summary-dot" aria-hidden="true">&middot;</span>
+            <span class="summary-inline-item"><strong id="summaryPendingTasks">0</strong> pending</span>
+            <span class="summary-dot" aria-hidden="true">&middot;</span>
+            <span class="summary-inline-item"><strong id="summaryStudyTime">0m</strong> studied</span>
+            <span class="summary-dot d-none" id="summaryCompletionDot" aria-hidden="true">&middot;</span>
+            <span class="summary-inline-item d-none" id="summaryCompletionWrap"><strong id="summaryCompletionPct">0%</strong> done</span>
+          </div>
+
+          <!-- Two-Column Editorial Planner Layout (60% / 40%) -->
+          <div class="planner-grid">
+            <!-- Left Column (60%): Today's Tasks & Upcoming Deadlines -->
+            <div class="planner-col-main">
+              <section class="planner-section planner-card mb-4" aria-label="Today's tasks">
+                <div class="planner-section-header">
+                  <h2 class="planner-section-title">Today</h2>
+                  <button type="button" class="btn-text-action" data-action="open-task-modal">+ Add task</button>
+                </div>
+                <div id="todayTasksContainer"></div>
+              </section>
+
+              <section class="planner-section planner-card" aria-label="Upcoming deadlines">
+                <div class="planner-section-header">
+                  <h2 class="planner-section-title">Upcoming deadlines</h2>
+                  <button type="button" class="btn-text-action" data-action="open-deadline-modal">+ Add deadline</button>
+                </div>
+                <div id="upcomingDeadlinesContainer"></div>
+              </section>
+            </div>
+
+            <!-- Right Column (40%): Schedule, Weekly Study Overview & Recent Activity -->
+            <div class="planner-col-side">
+              <section class="planner-section planner-card mb-4" aria-label="Today's schedule">
+                <div class="planner-section-header">
+                  <div class="d-flex align-items-baseline gap-2">
+                    <h2 class="planner-section-title">Your schedule</h2>
+                    <span class="planner-section-meta" id="timetableWeekdayLabel"></span>
+                  </div>
+                  <button type="button" class="btn-text-action" data-action="open-class-modal">+ Add class</button>
+                </div>
+                <div id="todayTimetableContainer"></div>
+              </section>
+
+              <section class="planner-section planner-card mb-4" aria-label="This week's study time">
+                <div class="planner-section-header">
+                  <h2 class="planner-section-title">This week</h2>
+                  <span class="planner-section-meta" id="weeklyTotalBadge">0m studied</span>
+                </div>
+                <div id="weeklyChartContainer"></div>
+              </section>
+
+              <section class="planner-section" aria-label="Recent activity">
+                <div class="planner-section-header">
+                  <h2 class="planner-section-title">Recent activity</h2>
+                  <span class="planner-section-meta" id="recentActivityCount"></span>
+                </div>
+                <div id="recentActivityContainer"></div>
+              </section>
+            </div>
+          </div>
+        </section>
+
+        <!-- My Tasks View -->
+        <section id="tasksView" class="tasks-view d-none" aria-label="My Tasks">
+          <div class="tasks-header surface-card mb-4">
+            <div class="d-flex flex-wrap align-items-center justify-content-between gap-3">
+              <div>
+                <h1 class="greeting-title mb-1">My Tasks</h1>
+                <p class="greeting-subtitle mb-0">Organize assignments, readings, and study milestones</p>
+              </div>
+              <button type="button" class="btn btn-accent" data-action="open-task-modal">
+                <i class="bi bi-plus-lg"></i>
+                <span>Add Task</span>
+              </button>
+            </div>
+
+            <!-- Task Statistics Strip -->
+            <div class="task-stats-strip mt-3 pt-3">
+              <div class="task-stat-item">
+                <span class="task-stat-label">Total Tasks</span>
+                <span class="task-stat-value" id="tasksStatTotal">0</span>
+              </div>
+              <div class="task-stat-item">
+                <span class="task-stat-label">Pending</span>
+                <span class="task-stat-value" id="tasksStatPending">0</span>
+              </div>
+              <div class="task-stat-item">
+                <span class="task-stat-label">Overdue</span>
+                <span class="task-stat-value text-danger-custom" id="tasksStatOverdue">0</span>
+              </div>
+              <div class="task-stat-item">
+                <span class="task-stat-label">Completed</span>
+                <span class="task-stat-value text-success-custom" id="tasksStatCompleted">0</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Filter & Search Controls -->
+          <div class="surface-card tasks-toolbar mb-4">
+            <div class="filter-tabs" role="tablist" aria-label="Task status filters">
+              <button type="button" class="filter-tab active" data-task-filter="all" role="tab" aria-selected="true">
+                All <span class="tab-count" id="countFilterAll">0</span>
+              </button>
+              <button type="button" class="filter-tab" data-task-filter="today" role="tab" aria-selected="false">
+                Today <span class="tab-count" id="countFilterToday">0</span>
+              </button>
+              <button type="button" class="filter-tab" data-task-filter="upcoming" role="tab" aria-selected="false">
+                Upcoming <span class="tab-count" id="countFilterUpcoming">0</span>
+              </button>
+              <button type="button" class="filter-tab" data-task-filter="overdue" role="tab" aria-selected="false">
+                Overdue <span class="tab-count" id="countFilterOverdue">0</span>
+              </button>
+              <button type="button" class="filter-tab" data-task-filter="completed" role="tab" aria-selected="false">
+                Completed <span class="tab-count" id="countFilterCompleted">0</span>
+              </button>
+            </div>
+
+            <div class="row g-2 mt-2 align-items-center">
+              <div class="col-12 col-md-5">
+                <div class="search-input-wrap">
+                  <i class="bi bi-search" aria-hidden="true"></i>
+                  <input
+                    type="search"
+                    class="form-control form-control-sm"
+                    id="taskSearchInput"
+                    placeholder="Search tasks by title, description, or subject..."
+                    aria-label="Search tasks"
+                  >
+                </div>
+              </div>
+              <div class="col-6 col-md-2">
+                <select class="form-select form-select-sm" id="taskPriorityFilter" aria-label="Filter by priority">
+                  <option value="all">All Priorities</option>
+                  <option value="Urgent">Urgent</option>
+                  <option value="High">High</option>
+                  <option value="Medium">Medium</option>
+                  <option value="Low">Low</option>
+                </select>
+              </div>
+              <div class="col-6 col-md-2">
+                <select class="form-select form-select-sm" id="taskSubjectFilter" aria-label="Filter by subject">
+                  <option value="all">All Subjects</option>
+                </select>
+              </div>
+              <div class="col-12 col-md-3">
+                <select class="form-select form-select-sm" id="taskSortSelect" aria-label="Sort tasks">
+                  <option value="dueDate">Sort: Due Date</option>
+                  <option value="priority">Sort: Priority</option>
+                  <option value="createdAt">Sort: Creation Date</option>
+                  <option value="alphabetical">Sort: Alphabetical</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <!-- Task List Container -->
+          <div class="surface-card section-card">
+            <div id="tasksListContainer" class="section-body-fill"></div>
+          </div>
+        </section>
+
+        <!-- Calendar & Deadline Management View -->
+        <section id="calendarView" class="calendar-view d-none" aria-label="Calendar and Deadlines">
+          <div class="tasks-header surface-card mb-4">
+            <div class="d-flex flex-wrap align-items-center justify-content-between gap-3">
+              <div>
+                <h1 class="greeting-title mb-1">Calendar &amp; Deadlines</h1>
+                <p class="greeting-subtitle mb-0">Schedule classes, exams, assignments, and track key deadlines</p>
+              </div>
+              <div class="d-flex flex-wrap gap-2">
+                <button type="button" class="btn btn-outline-accent" data-action="open-deadline-modal">
+                  <i class="bi bi-flag"></i>
+                  <span>Add Deadline</span>
+                </button>
+                <button type="button" class="btn btn-accent" data-action="open-event-modal">
+                  <i class="bi bi-plus-lg"></i>
+                  <span>Add Event</span>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Calendar Controls & Grid -->
+          <div class="row g-3 g-lg-4 mb-4">
+            <div class="col-12 col-xl-8">
+              <article class="surface-card section-card h-100">
+                <div class="calendar-toolbar mb-3">
+                  <div class="d-flex align-items-center gap-2 flex-wrap">
+                    <div class="btn-group btn-group-sm" role="group" aria-label="Calendar navigation">
+                      <button type="button" class="btn btn-outline-accent" id="calPrevBtn" aria-label="Previous period">
+                        <i class="bi bi-chevron-left"></i>
+                      </button>
+                      <button type="button" class="btn btn-outline-accent" id="calTodayBtn">Today</button>
+                      <button type="button" class="btn btn-outline-accent" id="calNextBtn" aria-label="Next period">
+                        <i class="bi bi-chevron-right"></i>
+                      </button>
+                    </div>
+                    <h2 class="calendar-period-title mb-0 ms-1" id="calendarPeriodTitle">November 2026</h2>
+                  </div>
+
+                  <div class="d-flex align-items-center gap-2 flex-wrap">
+                    <select class="form-select form-select-sm calendar-type-filter" id="calendarTypeFilter" aria-label="Filter calendar by event type">
+                      <option value="all">All Event Types</option>
+                      <option value="Assignment">Assignments</option>
+                      <option value="Exam">Exams</option>
+                      <option value="Project">Projects</option>
+                      <option value="Personal">Personal</option>
+                      <option value="Study Session">Study Sessions</option>
+                      <option value="Deadline">Deadlines</option>
+                    </select>
+                    <div class="btn-group btn-group-sm" role="group" aria-label="Calendar view mode">
+                      <button type="button" class="btn btn-outline-accent active" data-cal-view="month">Month</button>
+                      <button type="button" class="btn btn-outline-accent" data-cal-view="week">Week</button>
+                    </div>
+                  </div>
+                </div>
+
+                <div id="calendarGridContainer"></div>
+              </article>
+            </div>
+
+            <!-- Upcoming Events Sidebar -->
+            <div class="col-12 col-xl-4">
+              <article class="surface-card section-card h-100">
+                <div class="section-header">
+                  <div>
+                    <h2 class="section-title" id="upcomingEventsHeading">Upcoming Events</h2>
+                    <p class="section-subtitle mb-0" id="upcomingEventsSub">Next scheduled items &amp; tasks</p>
+                  </div>
+                  <span class="badge-soft badge-soft-indigo" id="upcomingEventsCount">0 items</span>
+                </div>
+                <div id="upcomingEventsContainer" class="section-body-fill"></div>
+              </article>
+            </div>
+          </div>
+
+          <!-- Separate Deadline Management Section -->
+          <section class="surface-card section-card" aria-label="Deadline Management">
+            <div class="section-header">
+              <div>
+                <h2 class="section-title">Deadline Management</h2>
+                <p class="section-subtitle mb-0">Track remaining days, priority, and completion status across all deadlines</p>
+              </div>
+              <div class="d-flex align-items-center gap-2 flex-wrap">
+                <select class="form-select form-select-sm calendar-type-filter" id="deadlineStatusFilter" aria-label="Filter deadlines by status">
+                  <option value="all">All Deadlines</option>
+                  <option value="upcoming">Upcoming</option>
+                  <option value="today">Due Today</option>
+                  <option value="overdue">Overdue</option>
+                  <option value="completed">Completed</option>
+                </select>
+                <button type="button" class="btn btn-sm btn-accent" data-action="open-deadline-modal">
+                  <i class="bi bi-plus-lg"></i>
+                  <span>Add Deadline</span>
+                </button>
+              </div>
+            </div>
+            <div id="deadlineManagementContainer" class="section-body-fill"></div>
+          </section>
+        </section>
+
+        <!-- Timetable View -->
+        <section id="timetableView" class="timetable-view d-none" aria-label="Weekly Timetable">
+          <div class="tasks-header surface-card mb-4">
+            <div class="d-flex flex-wrap align-items-center justify-content-between gap-3">
+              <div>
+                <h1 class="greeting-title mb-1">Weekly Timetable</h1>
+                <p class="greeting-subtitle mb-0">Manage your weekly lectures, labs, and class schedule</p>
+              </div>
+              <div class="d-flex flex-wrap gap-2">
+                <button type="button" class="btn btn-outline-accent" id="timetableTodayBtn">
+                  <i class="bi bi-calendar-check"></i>
+                  <span>Today</span>
+                </button>
+                <button type="button" class="btn btn-accent" data-action="open-class-modal">
+                  <i class="bi bi-plus-lg"></i>
+                  <span>Add Class</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Timetable Summary Strip -->
+            <div class="task-stats-strip mt-3 pt-3">
+              <div class="task-stat-item">
+                <span class="task-stat-label">Current Day</span>
+                <span class="task-stat-value" id="ttStatCurrentDay">Thursday</span>
+              </div>
+              <div class="task-stat-item">
+                <span class="task-stat-label">Next Class</span>
+                <span class="task-stat-value fs-6" id="ttStatNextClass">None</span>
+              </div>
+              <div class="task-stat-item">
+                <span class="task-stat-label">Remaining Today</span>
+                <span class="task-stat-value" id="ttStatRemaining">0</span>
+              </div>
+              <div class="task-stat-item">
+                <span class="task-stat-label">Total This Week</span>
+                <span class="task-stat-value" id="ttStatTotalWeek">0</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Mobile Day Switcher (visible < lg) -->
+          <div class="surface-card p-3 mb-3 d-lg-none">
+            <div class="tt-mobile-days" id="ttMobileDayTabs" role="tablist" aria-label="Select weekday"></div>
+          </div>
+
+          <!-- Timetable Content Container -->
+          <div class="surface-card section-card">
+            <div id="timetableContentContainer" class="section-body-fill"></div>
+          </div>
+        </section>
+
+        <!-- Study Sessions & Pomodoro Timer View -->
+        <section id="studySessionsView" class="study-sessions-view d-none" aria-label="Study Sessions and Pomodoro Timer">
+          <div class="tasks-header surface-card mb-4">
+            <div class="d-flex flex-wrap align-items-center justify-content-between gap-3">
+              <div>
+                <h1 class="greeting-title mb-1">Study Sessions &amp; Pomodoro</h1>
+                <p class="greeting-subtitle mb-0">Stay focused with structured intervals and automatic session tracking</p>
+              </div>
+              <div class="d-flex flex-wrap gap-2">
+                <button type="button" class="btn btn-outline-accent" id="toggleFullscreenFocusBtn">
+                  <i class="bi bi-arrows-fullscreen"></i>
+                  <span>Focus Mode</span>
+                </button>
+                <button type="button" class="btn btn-accent" data-action="open-study-modal">
+                  <i class="bi bi-plus-lg"></i>
+                  <span>Log Manual Session</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Study Summary Strip -->
+            <div class="task-stats-strip mt-3 pt-3">
+              <div class="task-stat-item">
+                <span class="task-stat-label">Daily Study Time</span>
+                <span class="task-stat-value" id="ssStatDailyTime">0m</span>
+              </div>
+              <div class="task-stat-item">
+                <span class="task-stat-label">Weekly Study Time</span>
+                <span class="task-stat-value" id="ssStatWeeklyTime">0m</span>
+              </div>
+              <div class="task-stat-item">
+                <span class="task-stat-label">Completed Pomodoros</span>
+                <span class="task-stat-value" id="ssStatPomodoros">0</span>
+              </div>
+              <div class="task-stat-item">
+                <span class="task-stat-label">Total Sessions</span>
+                <span class="task-stat-value" id="ssStatTotalSessions">0</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="row g-3 g-lg-4">
+            <!-- Pomodoro Timer Card -->
+            <div class="col-12 col-lg-5">
+              <article class="surface-card section-card h-100" id="pomodoroCard">
+                <div class="d-flex align-items-center justify-content-between mb-3">
+                  <div class="filter-tabs" role="tablist" aria-label="Timer session type">
+                    <button type="button" class="filter-tab active" data-pomo-mode="focus" role="tab" aria-selected="true">Focus</button>
+                    <button type="button" class="filter-tab" data-pomo-mode="shortBreak" role="tab" aria-selected="false">Short Break</button>
+                    <button type="button" class="filter-tab" data-pomo-mode="longBreak" role="tab" aria-selected="false">Long Break</button>
+                  </div>
+                  <button
+                    type="button"
+                    class="btn btn-icon d-none"
+                    id="exitFullscreenFocusBtn"
+                    aria-label="Exit focus mode"
+                    title="Exit Focus Mode"
+                  >
+                    <i class="bi bi-fullscreen-exit"></i>
+                  </button>
+                </div>
+
+                <!-- Circular SVG Progress Timer -->
+                <div class="pomo-ring-wrap">
+                  <svg class="pomo-svg" viewBox="0 0 220 220" aria-hidden="true">
+                    <circle class="pomo-ring-bg" cx="110" cy="110" r="96"></circle>
+                    <circle class="pomo-ring-progress" id="pomoProgressCircle" cx="110" cy="110" r="96"></circle>
+                  </svg>
+                  <div class="pomo-ring-center">
+                    <span class="badge-soft badge-soft-indigo mb-1" id="pomoModeLabel">Focus Session</span>
+                    <div class="pomo-countdown" id="pomoCountdownDisplay">25:00</div>
+                    <div class="pomo-cycle-text" id="pomoCycleIndicator">Cycle 1 of 4</div>
+                  </div>
+                </div>
+
+                <!-- Timer Controls -->
+                <div class="d-flex flex-wrap justify-content-center gap-2 mt-3">
+                  <button type="button" class="btn btn-accent" id="pomoStartBtn">
+                    <i class="bi bi-play-fill"></i>
+                    <span>Start</span>
+                  </button>
+                  <button type="button" class="btn btn-outline-accent d-none" id="pomoPauseBtn">
+                    <i class="bi bi-pause-fill"></i>
+                    <span>Pause</span>
+                  </button>
+                  <button type="button" class="btn btn-outline-accent" id="pomoResetBtn">
+                    <i class="bi bi-arrow-counterclockwise"></i>
+                    <span>Reset</span>
+                  </button>
+                  <button type="button" class="btn btn-outline-accent" id="pomoSkipBtn">
+                    <i class="bi bi-skip-forward-fill"></i>
+                    <span>Skip</span>
+                  </button>
+                </div>
+
+                <!-- Subject & Optional Task Selection -->
+                <div class="row g-2 mt-4">
+                  <div class="col-12 col-sm-6">
+                    <label for="pomoSubjectInput" class="form-label small fw-semibold">Subject</label>
+                    <input
+                      type="text"
+                      class="form-control form-control-sm"
+                      id="pomoSubjectInput"
+                      list="subjectSuggestions"
+                      placeholder="e.g., CS 301"
+                    >
+                  </div>
+                  <div class="col-12 col-sm-6">
+                    <label for="pomoTaskSelect" class="form-label small fw-semibold">Associated Task <span class="text-muted fw-normal">(optional)</span></label>
+                    <select class="form-select form-select-sm" id="pomoTaskSelect">
+                      <option value="">None</option>
+                    </select>
+                  </div>
+                </div>
+
+                <!-- Custom Duration Settings -->
+                <div class="pomo-settings-box mt-3 pt-3">
+                  <div class="d-flex align-items-center justify-content-between mb-2">
+                    <span class="small fw-semibold text-secondary">Customize Durations (minutes)</span>
+                    <button type="button" class="btn btn-sm btn-outline-accent" id="savePomoDurationsBtn">Apply</button>
+                  </div>
+                  <div class="row g-2">
+                    <div class="col-4">
+                      <label for="pomoFocusMins" class="form-label small text-muted mb-1">Focus</label>
+                      <input type="number" class="form-control form-control-sm" id="pomoFocusMins" min="1" max="180" value="25">
+                    </div>
+                    <div class="col-4">
+                      <label for="pomoShortMins" class="form-label small text-muted mb-1">Short Break</label>
+                      <input type="number" class="form-control form-control-sm" id="pomoShortMins" min="1" max="60" value="5">
+                    </div>
+                    <div class="col-4">
+                      <label for="pomoLongMins" class="form-label small text-muted mb-1">Long Break</label>
+                      <input type="number" class="form-control form-control-sm" id="pomoLongMins" min="1" max="90" value="15">
+                    </div>
+                  </div>
+                </div>
+              </article>
+            </div>
+
+            <!-- Study Session History -->
+            <div class="col-12 col-lg-7">
+              <article class="surface-card section-card h-100">
+                <div class="section-header">
+                  <div>
+                    <h2 class="section-title">Study History</h2>
+                    <p class="section-subtitle mb-0">Completed Pomodoro and manual study sessions</p>
+                  </div>
+                  <span class="badge-soft badge-soft-neutral" id="ssHistoryCount">0 sessions</span>
+                </div>
+                <div id="studyHistoryContainer" class="section-body-fill"></div>
+              </article>
+            </div>
+          </div>
+        </section>
+
+        <!-- Notes View -->
+        <section id="notesView" class="notes-view d-none" aria-label="Student Notes">
+          <div class="tasks-header surface-card mb-4">
+            <div class="d-flex flex-wrap align-items-center justify-content-between gap-3">
+              <div>
+                <h1 class="greeting-title mb-1">Notes</h1>
+                <p class="greeting-subtitle mb-0">Capture lecture summaries, formulas, and study takeaways</p>
+              </div>
+              <button type="button" class="btn btn-accent" data-action="open-note-modal">
+                <i class="bi bi-plus-lg"></i>
+                <span>Add Note</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Search, Filter & Sort Toolbar -->
+          <div class="surface-card tasks-toolbar mb-4">
+            <div class="row g-2 align-items-center">
+              <div class="col-12 col-md-5">
+                <div class="search-input-wrap">
+                  <i class="bi bi-search" aria-hidden="true"></i>
+                  <input
+                    type="search"
+                    class="form-control form-control-sm"
+                    id="noteSearchInput"
+                    placeholder="Search notes by title, content, subject, or tag..."
+                    aria-label="Search notes"
+                  >
+                </div>
+              </div>
+              <div class="col-6 col-md-2">
+                <select class="form-select form-select-sm" id="noteSubjectFilter" aria-label="Filter notes by subject">
+                  <option value="all">All Subjects</option>
+                </select>
+              </div>
+              <div class="col-6 col-md-2">
+                <select class="form-select form-select-sm" id="noteTagFilter" aria-label="Filter notes by tag">
+                  <option value="all">All Tags</option>
+                </select>
+              </div>
+              <div class="col-12 col-md-3">
+                <select class="form-select form-select-sm" id="noteSortSelect" aria-label="Sort notes">
+                  <option value="updatedAt">Sort: Recently Updated</option>
+                  <option value="createdAt">Sort: Creation Date</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <!-- Notes Content -->
+          <div id="notesContentContainer"></div>
+        </section>
+
+        <!-- Goals & Habit Tracker View -->
+        <section id="goalsView" class="goals-view d-none" aria-label="Goals and Habit Tracker">
+          <div class="tasks-header surface-card mb-4">
+            <div class="d-flex flex-wrap align-items-center justify-content-between gap-3">
+              <div>
+                <h1 class="greeting-title mb-1">Goals &amp; Habit Tracker</h1>
+                <p class="greeting-subtitle mb-0">Track long-term academic milestones and build daily study habits</p>
+              </div>
+              <div class="d-flex flex-wrap gap-2">
+                <button type="button" class="btn btn-outline-accent" data-action="open-habit-modal">
+                  <i class="bi bi-repeat"></i>
+                  <span>Add Habit</span>
+                </button>
+                <button type="button" class="btn btn-accent" data-action="open-goal-modal">
+                  <i class="bi bi-plus-lg"></i>
+                  <span>Add Goal</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Goals & Habits Summary Strip -->
+            <div class="task-stats-strip mt-3 pt-3">
+              <div class="task-stat-item">
+                <span class="task-stat-label">Active Goals</span>
+                <span class="task-stat-value" id="ghStatActiveGoals">0</span>
+              </div>
+              <div class="task-stat-item">
+                <span class="task-stat-label">Completed Goals</span>
+                <span class="task-stat-value text-success-custom" id="ghStatCompletedGoals">0</span>
+              </div>
+              <div class="task-stat-item">
+                <span class="task-stat-label">Habits Done Today</span>
+                <span class="task-stat-value" id="ghStatHabitsToday">0 / 0</span>
+              </div>
+              <div class="task-stat-item">
+                <span class="task-stat-label">Weekly Habit Rate</span>
+                <span class="task-stat-value" id="ghStatWeeklyHabitRate">0%</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Goals Section -->
+          <section class="surface-card section-card mb-4" aria-label="Academic Goals">
+            <div class="section-header">
+              <div>
+                <h2 class="section-title">Academic Goals</h2>
+                <p class="section-subtitle mb-0">Track progress percentage and target deadlines</p>
+              </div>
+              <button type="button" class="btn btn-sm btn-outline-accent" data-action="open-goal-modal">
+                <i class="bi bi-plus-lg"></i>
+                <span>Add Goal</span>
+              </button>
+            </div>
+            <div id="goalsListContainer" class="section-body-fill"></div>
+          </section>
+
+          <!-- Habit Tracker & Habit Calendar -->
+          <div class="row g-3 g-lg-4">
+            <div class="col-12 col-lg-7">
+              <article class="surface-card section-card h-100">
+                <div class="section-header">
+                  <div>
+                    <h2 class="section-title">Daily Habit Tracker</h2>
+                    <p class="section-subtitle mb-0">Check off daily habits and monitor weekly consistency</p>
+                  </div>
+                  <button type="button" class="btn btn-sm btn-outline-accent" data-action="open-habit-modal">
+                    <i class="bi bi-plus-lg"></i>
+                    <span>Add Habit</span>
+                  </button>
+                </div>
+                <div id="habitsListContainer" class="section-body-fill"></div>
+              </article>
+            </div>
+
+            <div class="col-12 col-lg-5">
+              <article class="surface-card section-card h-100">
+                <div class="section-header">
+                  <div>
+                    <h2 class="section-title">Habit Calendar (28 Days)</h2>
+                    <p class="section-subtitle mb-0">Daily completion intensity from stored habit logs</p>
+                  </div>
+                  <span class="badge-soft badge-soft-indigo" id="habitCalendarTotalBadge">0 check-ins</span>
+                </div>
+                <div id="habitCalendarContainer" class="section-body-fill"></div>
+              </article>
+            </div>
+          </div>
+        </section>
+
+        <!-- Subjects View (List + Detail Page) -->
+        <section id="subjectsView" class="subjects-view d-none" aria-label="Subjects">
+          <div id="subjectsListSection">
+            <div class="tasks-header surface-card mb-4">
+              <div class="d-flex flex-wrap align-items-center justify-content-between gap-3">
+                <div>
+                  <h1 class="greeting-title mb-1">Subjects</h1>
+                  <p class="greeting-subtitle mb-0">Manage your courses, credits, target grades, and academic performance</p>
+                </div>
+                <button type="button" class="btn btn-accent" data-action="open-subject-modal">
+                  <i class="bi bi-plus-lg"></i>
+                  <span>Add Subject</span>
+                </button>
+              </div>
+            </div>
+
+            <div id="subjectsGridContainer"></div>
+          </div>
+
+          <!-- Subject Detail Page -->
+          <div id="subjectDetailSection" class="d-none"></div>
+        </section>
+
+        <!-- Analytics View -->
+        <section id="analyticsView" class="analytics-view d-none" aria-label="Productivity Analytics">
+          <div class="tasks-header surface-card mb-4">
+            <div class="d-flex flex-wrap align-items-center justify-content-between gap-3">
+              <div>
+                <h1 class="greeting-title mb-1">Analytics &amp; Insights</h1>
+                <p class="greeting-subtitle mb-0">Data-driven overview of your study hours, tasks, consistency, and goals</p>
+              </div>
+              <div class="d-flex flex-wrap align-items-center gap-2">
+                <select class="form-select form-select-sm calendar-type-filter" id="analyticsRangeSelect" aria-label="Analytics date range">
+                  <option value="today">Today</option>
+                  <option value="last7" selected>Last 7 days</option>
+                  <option value="last30">Last 30 days</option>
+                  <option value="thisMonth">This month</option>
+                  <option value="custom">Custom range</option>
+                </select>
+                <div class="d-flex align-items-center gap-2 d-none" id="analyticsCustomRangeWrap">
+                  <input type="date" class="form-control form-control-sm" id="analyticsStartDate" aria-label="Start date">
+                  <span class="small text-muted">to</span>
+                  <input type="date" class="form-control form-control-sm" id="analyticsEndDate" aria-label="End date">
+                </div>
+              </div>
+            </div>
+
+            <!-- Study Hours & Consistency Strip -->
+            <div class="analytics-kpi-strip mt-3 pt-3">
+              <div class="task-stat-item">
+                <span class="task-stat-label">Daily Study</span>
+                <span class="task-stat-value" id="anDailyStudy">0m</span>
+              </div>
+              <div class="task-stat-item">
+                <span class="task-stat-label">Weekly Study</span>
+                <span class="task-stat-value" id="anWeeklyStudy">0m</span>
+              </div>
+              <div class="task-stat-item">
+                <span class="task-stat-label">Monthly Study</span>
+                <span class="task-stat-value" id="anMonthlyStudy">0m</span>
+              </div>
+              <div class="task-stat-item">
+                <span class="task-stat-label">Study Streak</span>
+                <span class="task-stat-value" id="anStudyStreak">0d</span>
+              </div>
+              <div class="task-stat-item">
+                <span class="task-stat-label">Active Days (Range)</span>
+                <span class="task-stat-value" id="anActiveDays">0</span>
+              </div>
+              <div class="task-stat-item">
+                <span class="task-stat-label">Avg. Daily (Range)</span>
+                <span class="task-stat-value" id="anAvgDaily">0m</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Insights & Productivity Trend -->
+          <div class="row g-3 g-lg-4 mb-4">
+            <div class="col-12 col-lg-8">
+              <article class="surface-card section-card h-100">
+                <div class="section-header">
+                  <div>
+                    <h2 class="section-title">Productivity Trend</h2>
+                    <p class="section-subtitle mb-0" id="anTrendSubtitle">Study hours over time</p>
+                  </div>
+                  <span class="badge-soft badge-soft-indigo" id="anRangeTotalBadge">0m total</span>
+                </div>
+                <div id="anTrendChartContainer" class="section-body-fill"></div>
+              </article>
+            </div>
+
+            <div class="col-12 col-lg-4">
+              <article class="surface-card section-card h-100">
+                <div class="section-header">
+                  <div>
+                    <h2 class="section-title">Key Insights</h2>
+                    <p class="section-subtitle mb-0">Generated strictly from your stored data</p>
+                  </div>
+                </div>
+                <div id="anInsightsContainer" class="section-body-fill"></div>
+              </article>
+            </div>
+          </div>
+
+          <!-- Subject Productivity & Task Completion -->
+          <div class="row g-3 g-lg-4 mb-4">
+            <div class="col-12 col-lg-6">
+              <article class="surface-card section-card h-100">
+                <div class="section-header">
+                  <div>
+                    <h2 class="section-title">Subject Productivity</h2>
+                    <p class="section-subtitle mb-0">Study hours by subject in selected range</p>
+                  </div>
+                </div>
+                <div id="anSubjectChartContainer" class="section-body-fill"></div>
+              </article>
+            </div>
+
+            <div class="col-12 col-lg-6">
+              <article class="surface-card section-card h-100">
+                <div class="section-header">
+                  <div>
+                    <h2 class="section-title">Task Completion</h2>
+                    <p class="section-subtitle mb-0">Completed, pending, and overdue breakdown</p>
+                  </div>
+                </div>
+                <div id="anTaskCompletionContainer" class="section-body-fill"></div>
+              </article>
+            </div>
+          </div>
+
+          <!-- Priority Distribution, Weekly Activity & Goal Progress -->
+          <div class="row g-3 g-lg-4">
+            <div class="col-12 col-xl-4">
+              <article class="surface-card section-card h-100">
+                <div class="section-header">
+                  <div>
+                    <h2 class="section-title">Task Priority Distribution</h2>
+                    <p class="section-subtitle mb-0">Low, Medium, High, and Urgent tasks</p>
+                  </div>
+                </div>
+                <div id="anPriorityContainer" class="section-body-fill"></div>
+              </article>
+            </div>
+
+            <div class="col-12 col-xl-4">
+              <article class="surface-card section-card h-100">
+                <div class="section-header">
+                  <div>
+                    <h2 class="section-title">Weekly Activity</h2>
+                    <p class="section-subtitle mb-0">Tasks completed each day this week</p>
+                  </div>
+                </div>
+                <div id="anWeeklyActivityContainer" class="section-body-fill"></div>
+              </article>
+            </div>
+
+            <div class="col-12 col-xl-4">
+              <article class="surface-card section-card h-100">
+                <div class="section-header">
+                  <div>
+                    <h2 class="section-title">Goal Progress</h2>
+                    <p class="section-subtitle mb-0">Active, completed, and average completion</p>
+                  </div>
+                </div>
+                <div id="anGoalProgressContainer" class="section-body-fill"></div>
+              </article>
+            </div>
+          </div>
+        </section>
+
+        <!-- Settings View -->
+        <section id="settingsView" class="settings-view d-none" aria-label="Settings">
+          <div class="tasks-header surface-card mb-4">
+            <h1 class="greeting-title mb-1">Settings</h1>
+            <p class="greeting-subtitle mb-0">Customize your profile, theme, study goals, notifications, and data backups</p>
+          </div>
+
+          <div class="row g-3 g-lg-4">
+            <!-- Profile & Appearance -->
+            <div class="col-12 col-lg-6">
+              <article class="surface-card section-card mb-3 mb-lg-4">
+                <div class="section-header">
+                  <div>
+                    <h2 class="section-title">Student Profile</h2>
+                    <p class="section-subtitle mb-0">Personalize your workspace and greeting</p>
+                  </div>
+                </div>
+                <form id="profileSettingsForm">
+                  <div class="row g-3">
+                    <div class="col-12 col-sm-6">
+                      <label for="settingStudentName" class="form-label">Student Name</label>
+                      <input type="text" class="form-control" id="settingStudentName" required>
+                    </div>
+                    <div class="col-12 col-sm-6">
+                      <label for="settingCollege" class="form-label">College Name</label>
+                      <input type="text" class="form-control" id="settingCollege" placeholder="e.g., State University">
+                    </div>
+                    <div class="col-12 col-sm-6">
+                      <label for="settingCourse" class="form-label">Course</label>
+                      <input type="text" class="form-control" id="settingCourse" placeholder="e.g., B.S. Computer Science">
+                    </div>
+                    <div class="col-12 col-sm-6">
+                      <label for="settingSemester" class="form-label">Semester</label>
+                      <input type="text" class="form-control" id="settingSemester" placeholder="e.g., Fall 2026">
+                    </div>
+                  </div>
+                  <div class="mt-3">
+                    <button type="submit" class="btn btn-accent btn-sm">Save Profile</button>
+                  </div>
+                </form>
+              </article>
+
+              <article class="surface-card section-card">
+                <div class="section-header">
+                  <div>
+                    <h2 class="section-title">Appearance</h2>
+                    <p class="section-subtitle mb-0">Choose Light, Dark, or follow your OS preference</p>
+                  </div>
+                </div>
+                <div class="theme-options-grid" role="radiogroup" aria-label="Theme selection">
+                  <button type="button" class="theme-option-btn" data-theme-choice="light">
+                    <i class="bi bi-sun"></i>
+                    <span>Light</span>
+                  </button>
+                  <button type="button" class="theme-option-btn" data-theme-choice="dark">
+                    <i class="bi bi-moon-stars"></i>
+                    <span>Dark</span>
+                  </button>
+                  <button type="button" class="theme-option-btn" data-theme-choice="system">
+                    <i class="bi bi-laptop"></i>
+                    <span>System</span>
+                  </button>
+                </div>
+              </article>
+            </div>
+
+            <!-- Productivity, Notifications & Data Management -->
+            <div class="col-12 col-lg-6">
+              <article class="surface-card section-card mb-3 mb-lg-4">
+                <div class="section-header">
+                  <div>
+                    <h2 class="section-title">Productivity &amp; Timer Settings</h2>
+                    <p class="section-subtitle mb-0">Default Pomodoro durations and study hour goals</p>
+                  </div>
+                </div>
+                <form id="productivitySettingsForm">
+                  <div class="row g-3">
+                    <div class="col-4">
+                      <label for="settingFocusMins" class="form-label">Focus (min)</label>
+                      <input type="number" class="form-control" id="settingFocusMins" min="1" max="180" value="25" required>
+                    </div>
+                    <div class="col-4">
+                      <label for="settingShortBreakMins" class="form-label">Short Break</label>
+                      <input type="number" class="form-control" id="settingShortBreakMins" min="1" max="60" value="5" required>
+                    </div>
+                    <div class="col-4">
+                      <label for="settingLongBreakMins" class="form-label">Long Break</label>
+                      <input type="number" class="form-control" id="settingLongBreakMins" min="1" max="90" value="15" required>
+                    </div>
+                    <div class="col-6">
+                      <label for="settingDailyGoalHrs" class="form-label">Daily Study Goal (hrs)</label>
+                      <input type="number" class="form-control" id="settingDailyGoalHrs" min="0.5" max="16" step="0.5" value="3" required>
+                    </div>
+                    <div class="col-6">
+                      <label for="settingWeeklyGoalHrs" class="form-label">Weekly Study Goal (hrs)</label>
+                      <input type="number" class="form-control" id="settingWeeklyGoalHrs" min="1" max="100" step="1" value="20" required>
+                    </div>
+                  </div>
+                  <div class="mt-3">
+                    <button type="submit" class="btn btn-accent btn-sm">Save Productivity Settings</button>
+                  </div>
+                </form>
+              </article>
+
+              <article class="surface-card section-card mb-3 mb-lg-4">
+                <div class="section-header">
+                  <div>
+                    <h2 class="section-title">Notifications</h2>
+                    <p class="section-subtitle mb-0">Control reminders (browser alerts require permission)</p>
+                  </div>
+                  <button type="button" class="btn btn-sm btn-outline-accent" id="requestNotificationPermBtn">
+                    <i class="bi bi-bell"></i> Enable Browser Alerts
+                  </button>
+                </div>
+                <div class="d-flex flex-column gap-2">
+                  <label class="form-check form-switch">
+                    <input class="form-check-input" type="checkbox" id="notifDeadlineToggle">
+                    <span class="form-check-label">Deadline reminders</span>
+                  </label>
+                  <label class="form-check form-switch">
+                    <input class="form-check-input" type="checkbox" id="notifTimerToggle">
+                    <span class="form-check-label">Study timer notifications</span>
+                  </label>
+                  <label class="form-check form-switch">
+                    <input class="form-check-input" type="checkbox" id="notifGoalToggle">
+                    <span class="form-check-label">Daily goal reminders</span>
+                  </label>
+                </div>
+                <div class="small text-muted mt-2" id="notifPermissionStatus">Browser permission: checking...</div>
+              </article>
+
+              <article class="surface-card section-card">
+                <div class="section-header">
+                  <div>
+                    <h2 class="section-title">Data Management</h2>
+                    <p class="section-subtitle mb-0">Back up, restore, or reset your LocalStorage workspace</p>
+                  </div>
+                </div>
+                <div class="d-flex flex-wrap gap-2">
+                  <button type="button" class="btn btn-outline-accent btn-sm" id="exportDataBtn">
+                    <i class="bi bi-download"></i> Export JSON Backup
+                  </button>
+                  <label class="btn btn-outline-accent btn-sm mb-0" for="importDataInput">
+                    <i class="bi bi-upload"></i> Import JSON
+                  </label>
+                  <input type="file" id="importDataInput" accept="application/json,.json" class="d-none">
+                  <button type="button" class="btn btn-outline-danger btn-sm" id="openClearDataModalBtn">
+                    <i class="bi bi-trash"></i> Clear All Data
+                  </button>
+                </div>
+              </article>
+            </div>
+          </div>
+        </section>
+
+
+        <!-- Clean Shell Placeholder for Other Navigation Sections -->
+        <section id="sectionPlaceholder" class="section-placeholder surface-card d-none" aria-live="polite">
+          <div class="placeholder-inner">
+            <span class="placeholder-icon" aria-hidden="true">
+              <i class="bi bi-layers"></i>
+            </span>
+            <h2 class="placeholder-title" id="placeholderTitle">Section</h2>
+            <p class="placeholder-description" id="placeholderDescription">
+              This module is part of the StudyFlow navigation shell.
+            </p>
+            <button type="button" class="btn btn-accent" id="backToDashboardBtn">
+              <i class="bi bi-arrow-left"></i>
+              <span>Return to Dashboard</span>
+            </button>
+          </div>
+        </section>
+      </main>
+    </div>
+  </div>
+
+  <!-- Toast Feedback Container -->
+  <div class="toast-container position-fixed bottom-0 end-0 p-3" id="toastContainer"></div>
+
+  <!-- ========================================================================
+       Modals for Quick Actions & Data Creation
+       ======================================================================== -->
+
+  <!-- Add / Edit Task Modal -->
+  <div class="modal fade" id="taskModal" tabindex="-1" aria-labelledby="taskModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+      <div class="modal-content modal-surface">
+        <div class="modal-header">
+          <h2 class="modal-title fs-6 fw-bold" id="taskModalLabel">Add New Task</h2>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <form id="taskForm">
+          <input type="hidden" id="taskId" value="">
+          <div class="modal-body">
+            <div class="mb-3">
+              <label for="taskTitle" class="form-label">Task Title</label>
+              <input type="text" class="form-control" id="taskTitle" placeholder="e.g., Complete Graph Traversal Worksheet" required>
+            </div>
+            <div class="mb-3">
+              <label for="taskDescription" class="form-label">Description <span class="text-muted fw-normal">(optional)</span></label>
+              <textarea class="form-control" id="taskDescription" rows="2" placeholder="Add notes, chapters, or submission details..."></textarea>
+            </div>
+            <div class="row g-3 mb-3">
+              <div class="col-12 col-sm-6">
+                <label for="taskSubject" class="form-label">Subject</label>
+                <input type="text" class="form-control" id="taskSubject" list="subjectSuggestions" placeholder="e.g., CS 301" required>
+              </div>
+              <div class="col-12 col-sm-6">
+                <label for="taskCategory" class="form-label">Category</label>
+                <select class="form-select" id="taskCategory" required>
+                  <option value="Assignment">Assignment</option>
+                  <option value="Exam Prep">Exam Prep</option>
+                  <option value="Reading">Reading</option>
+                  <option value="Project">Project</option>
+                  <option value="Lab">Lab</option>
+                  <option value="Personal">Personal</option>
+                </select>
+              </div>
+            </div>
+            <div class="row g-3 mb-3">
+              <div class="col-6 col-sm-4">
+                <label for="taskPriority" class="form-label">Priority</label>
+                <select class="form-select" id="taskPriority" required>
+                  <option value="Low">Low</option>
+                  <option value="Medium" selected>Medium</option>
+                  <option value="High">High</option>
+                  <option value="Urgent">Urgent</option>
+                </select>
+              </div>
+              <div class="col-6 col-sm-4">
+                <label for="taskStatus" class="form-label">Status</label>
+                <select class="form-select" id="taskStatus" required>
+                  <option value="Pending" selected>Pending</option>
+                  <option value="In Progress">In Progress</option>
+                  <option value="Completed">Completed</option>
+                </select>
+              </div>
+              <div class="col-12 col-sm-4">
+                <label for="taskEstimatedMinutes" class="form-label">Est. Duration <span class="text-muted fw-normal">(min)</span></label>
+                <input type="number" class="form-control" id="taskEstimatedMinutes" min="5" max="600" placeholder="e.g., 45">
+              </div>
+            </div>
+            <div class="row g-3">
+              <div class="col-12 col-sm-6">
+                <label for="taskDate" class="form-label">Due Date</label>
+                <input type="date" class="form-control" id="taskDate" required>
+              </div>
+              <div class="col-12 col-sm-6">
+                <label for="taskDueTime" class="form-label">Due Time</label>
+                <input type="time" class="form-control" id="taskDueTime" value="17:00" required>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-outline-accent" data-bs-dismiss="modal">Cancel</button>
+            <button type="submit" class="btn btn-accent" id="taskSubmitBtn">Save Task</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Delete Task Confirmation Modal -->
+  <div class="modal fade" id="deleteTaskModal" tabindex="-1" aria-labelledby="deleteTaskModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-sm">
+      <div class="modal-content modal-surface">
+        <div class="modal-header">
+          <h2 class="modal-title fs-6 fw-bold" id="deleteTaskModalLabel">Delete Task</h2>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <p class="mb-0 text-secondary">Are you sure you want to delete <strong id="deleteTaskName">this task</strong>?</p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline-accent btn-sm" data-bs-dismiss="modal">Cancel</button>
+          <button type="button" class="btn btn-danger btn-sm" id="confirmDeleteTaskBtn">Delete</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Start / Log Study Session Modal -->
+  <div class="modal fade" id="studyModal" tabindex="-1" aria-labelledby="studyModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content modal-surface">
+        <div class="modal-header">
+          <h2 class="modal-title fs-6 fw-bold" id="studyModalLabel">Study Session</h2>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <div class="study-timer-box text-center mb-3">
+            <div class="timer-display" id="studyTimerDisplay">25:00</div>
+            <div class="timer-status" id="studyTimerStatus">Focus Timer Ready</div>
+            <div class="d-flex justify-content-center gap-2 mt-3">
+              <button type="button" class="btn btn-accent btn-sm" id="timerStartPauseBtn">
+                <i class="bi bi-play-fill"></i> Start Timer
+              </button>
+              <button type="button" class="btn btn-outline-accent btn-sm" id="timerResetBtn">
+                <i class="bi bi-arrow-counterclockwise"></i> Reset
+              </button>
+            </div>
+          </div>
+
+          <hr class="my-3">
+
+          <form id="studySessionForm">
+            <div class="mb-3">
+              <label for="studySubject" class="form-label">Subject</label>
+              <input type="text" class="form-control" id="studySubject" list="subjectSuggestions" placeholder="e.g., Linear Algebra" required>
+            </div>
+            <div class="row g-3 mb-3">
+              <div class="col-12 col-sm-6">
+                <label for="studyTopic" class="form-label">Focus Topic</label>
+                <input type="text" class="form-control" id="studyTopic" placeholder="e.g., Eigenvalues practice" required>
+              </div>
+              <div class="col-12 col-sm-6">
+                <label for="studyDuration" class="form-label">Duration (minutes)</label>
+                <input type="number" class="form-control" id="studyDuration" min="1" max="480" value="25" required>
+              </div>
+            </div>
+            <div class="d-grid">
+              <button type="submit" class="btn btn-accent">
+                <i class="bi bi-check2-circle"></i> Log Study Session
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Add Deadline Modal -->
+  <div class="modal fade" id="deadlineModal" tabindex="-1" aria-labelledby="deadlineModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content modal-surface">
+        <div class="modal-header">
+          <h2 class="modal-title fs-6 fw-bold" id="deadlineModalLabel">Add Upcoming Deadline</h2>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <form id="deadlineForm">
+          <div class="modal-body">
+            <div class="mb-3">
+              <label for="deadlineTitle" class="form-label">Title</label>
+              <input type="text" class="form-control" id="deadlineTitle" placeholder="e.g., Midterm Exam or Research Paper" required>
+            </div>
+            <div class="row g-3 mb-3">
+              <div class="col-12 col-sm-6">
+                <label for="deadlineType" class="form-label">Category</label>
+                <select class="form-select" id="deadlineType" required>
+                  <option value="Assignment">Assignment</option>
+                  <option value="Exam">Exam</option>
+                  <option value="Project">Project</option>
+                  <option value="Other">Other</option>
+                </select>
+              </div>
+              <div class="col-12 col-sm-6">
+                <label for="deadlinePriority" class="form-label">Priority</label>
+                <select class="form-select" id="deadlinePriority" required>
+                  <option value="Low">Low</option>
+                  <option value="Medium" selected>Medium</option>
+                  <option value="High">High</option>
+                  <option value="Urgent">Urgent</option>
+                </select>
+              </div>
+            </div>
+            <div class="row g-3">
+              <div class="col-12 col-sm-6">
+                <label for="deadlineSubject" class="form-label">Subject</label>
+                <input type="text" class="form-control" id="deadlineSubject" list="subjectSuggestions" placeholder="e.g., BIO 115" required>
+              </div>
+              <div class="col-12 col-sm-6">
+                <label for="deadlineDate" class="form-label">Due Date</label>
+                <input type="date" class="form-control" id="deadlineDate" required>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-outline-accent" data-bs-dismiss="modal">Cancel</button>
+            <button type="submit" class="btn btn-accent">Save Deadline</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Add / Edit Calendar Event Modal -->
+  <div class="modal fade" id="eventModal" tabindex="-1" aria-labelledby="eventModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+      <div class="modal-content modal-surface">
+        <div class="modal-header">
+          <h2 class="modal-title fs-6 fw-bold" id="eventModalLabel">Add Calendar Event</h2>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <form id="eventForm">
+          <input type="hidden" id="eventId" value="">
+          <div class="modal-body">
+            <div class="mb-3">
+              <label for="eventTitle" class="form-label">Event Title</label>
+              <input type="text" class="form-control" id="eventTitle" placeholder="e.g., Algorithms Midterm Review" required>
+            </div>
+            <div class="mb-3">
+              <label for="eventDescription" class="form-label">Description <span class="text-muted fw-normal">(optional)</span></label>
+              <textarea class="form-control" id="eventDescription" rows="2" placeholder="Room, topics, or preparation notes..."></textarea>
+            </div>
+            <div class="row g-3 mb-3">
+              <div class="col-12 col-sm-4">
+                <label for="eventType" class="form-label">Event Type</label>
+                <select class="form-select" id="eventType" required>
+                  <option value="Assignment">Assignment</option>
+                  <option value="Exam">Exam</option>
+                  <option value="Project">Project</option>
+                  <option value="Personal">Personal</option>
+                  <option value="Study Session">Study Session</option>
+                  <option value="Deadline">Deadline</option>
+                </select>
+              </div>
+              <div class="col-12 col-sm-4">
+                <label for="eventSubject" class="form-label">Subject</label>
+                <input type="text" class="form-control" id="eventSubject" list="subjectSuggestions" placeholder="e.g., CS 301" required>
+              </div>
+              <div class="col-12 col-sm-4">
+                <label for="eventPriority" class="form-label">Priority</label>
+                <select class="form-select" id="eventPriority" required>
+                  <option value="Low">Low</option>
+                  <option value="Medium" selected>Medium</option>
+                  <option value="High">High</option>
+                  <option value="Urgent">Urgent</option>
+                </select>
+              </div>
+            </div>
+            <div class="row g-3">
+              <div class="col-12 col-sm-4">
+                <label for="eventDate" class="form-label">Date</label>
+                <input type="date" class="form-control" id="eventDate" required>
+              </div>
+              <div class="col-6 col-sm-4">
+                <label for="eventStartTime" class="form-label">Start Time</label>
+                <input type="time" class="form-control" id="eventStartTime" value="10:00" required>
+              </div>
+              <div class="col-6 col-sm-4">
+                <label for="eventEndTime" class="form-label">End Time</label>
+                <input type="time" class="form-control" id="eventEndTime" value="11:00" required>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-outline-accent" data-bs-dismiss="modal">Cancel</button>
+            <button type="submit" class="btn btn-accent" id="eventSubmitBtn">Save Event</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Event Details Modal -->
+  <div class="modal fade" id="eventDetailModal" tabindex="-1" aria-labelledby="eventDetailTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content modal-surface">
+        <div class="modal-header">
+          <h2 class="modal-title fs-6 fw-bold" id="eventDetailTitle">Event Details</h2>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body" id="eventDetailBody"></div>
+        <div class="modal-footer" id="eventDetailFooter"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Add / Edit Timetable Class Modal -->
+  <div class="modal fade" id="classModal" tabindex="-1" aria-labelledby="classModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content modal-surface">
+        <div class="modal-header">
+          <h2 class="modal-title fs-6 fw-bold" id="classModalLabel">Add Class to Timetable</h2>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <form id="classForm">
+          <input type="hidden" id="classId" value="">
+          <div class="modal-body">
+            <div class="mb-3">
+              <label for="className" class="form-label">Subject Name</label>
+              <input type="text" class="form-control" id="className" list="subjectSuggestions" placeholder="e.g., CS 301 Data Structures" required>
+            </div>
+            <div class="row g-3 mb-3">
+              <div class="col-12 col-sm-6">
+                <label for="classTeacher" class="form-label">Teacher Name</label>
+                <input type="text" class="form-control" id="classTeacher" placeholder="e.g., Prof. Sarah Lin" required>
+              </div>
+              <div class="col-12 col-sm-6">
+                <label for="classLocation" class="form-label">Room Number</label>
+                <input type="text" class="form-control" id="classLocation" placeholder="e.g., Hall B-204" required>
+              </div>
+            </div>
+            <div class="row g-3 mb-3">
+              <div class="col-12 col-sm-6">
+                <label for="classWeekday" class="form-label">Day of Week</label>
+                <select class="form-select" id="classWeekday" required>
+                  <option value="1">Monday</option>
+                  <option value="2">Tuesday</option>
+                  <option value="3">Wednesday</option>
+                  <option value="4">Thursday</option>
+                  <option value="5">Friday</option>
+                  <option value="6">Saturday</option>
+                  <option value="0">Sunday</option>
+                </select>
+              </div>
+              <div class="col-12 col-sm-6">
+                <label for="classColor" class="form-label">Color</label>
+                <select class="form-select" id="classColor" required>
+                  <option value="#4f46e5">Indigo</option>
+                  <option value="#10b981">Emerald</option>
+                  <option value="#0ea5e9">Sky Blue</option>
+                  <option value="#8b5cf6">Violet</option>
+                  <option value="#f59e0b">Amber</option>
+                  <option value="#ef4444">Rose</option>
+                </select>
+              </div>
+            </div>
+            <div class="row g-3">
+              <div class="col-6">
+                <label for="classStartTime" class="form-label">Start Time</label>
+                <input type="time" class="form-control" id="classStartTime" value="09:00" required>
+              </div>
+              <div class="col-6">
+                <label for="classEndTime" class="form-label">End Time</label>
+                <input type="time" class="form-control" id="classEndTime" value="10:15" required>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-outline-accent" data-bs-dismiss="modal">Cancel</button>
+            <button type="submit" class="btn btn-accent" id="classSubmitBtn">Save Class</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Add / Edit Note Modal -->
+  <div class="modal fade" id="noteModal" tabindex="-1" aria-labelledby="noteModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+      <div class="modal-content modal-surface">
+        <div class="modal-header">
+          <h2 class="modal-title fs-6 fw-bold" id="noteModalLabel">Add Note</h2>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <form id="noteForm">
+          <input type="hidden" id="noteId" value="">
+          <div class="modal-body">
+            <div class="mb-3">
+              <label for="noteTitle" class="form-label">Note Title</label>
+              <input type="text" class="form-control" id="noteTitle" placeholder="e.g., Dijkstra's Algorithm Summary" required>
+            </div>
+            <div class="row g-3 mb-3">
+              <div class="col-12 col-sm-6">
+                <label for="noteSubject" class="form-label">Subject</label>
+                <input type="text" class="form-control" id="noteSubject" list="subjectSuggestions" placeholder="e.g., CS 301" required>
+              </div>
+              <div class="col-12 col-sm-6">
+                <label for="noteTags" class="form-label">Tags <span class="text-muted fw-normal">(comma-separated)</span></label>
+                <input type="text" class="form-control" id="noteTags" placeholder="e.g., graphs, midterm, formulas">
+              </div>
+            </div>
+            <div class="mb-3">
+              <div class="d-flex align-items-center justify-content-between mb-1">
+                <label for="noteContent" class="form-label mb-0">Content</label>
+                <div class="btn-group btn-group-sm" role="group" aria-label="Text formatting">
+                  <button type="button" class="btn btn-outline-accent" data-note-format="bold" title="Bold"><i class="bi bi-type-bold"></i></button>
+                  <button type="button" class="btn btn-outline-accent" data-note-format="italic" title="Italic"><i class="bi bi-type-italic"></i></button>
+                  <button type="button" class="btn btn-outline-accent" data-note-format="underline" title="Underline"><i class="bi bi-type-underline"></i></button>
+                  <button type="button" class="btn btn-outline-accent" data-note-format="list" title="Bullet list"><i class="bi bi-list-ul"></i></button>
+                </div>
+              </div>
+              <textarea class="form-control" id="noteContent" rows="5" placeholder="Write key takeaways, definitions, or bullet points..." required></textarea>
+            </div>
+
+            <!-- File Attachments Dropzone & List -->
+            <div>
+              <label class="form-label">Attachments <span class="text-muted fw-normal">(max 10 files, 10 MB each)</span></label>
+              <div
+                class="note-dropzone"
+                id="noteDropzone"
+                tabindex="0"
+                role="button"
+                aria-label="Drop files here or browse to attach"
+              >
+                <i class="bi bi-paperclip" aria-hidden="true"></i>
+                <div class="dropzone-title">Drop files here or browse</div>
+                <div class="dropzone-sub">PDFs, Word, PowerPoint, TXT, and images (PNG, JPG, WEBP, GIF)</div>
+                <input
+                  type="file"
+                  id="noteFileInput"
+                  class="d-none"
+                  multiple
+                  accept=".pdf,.doc,.docx,.ppt,.pptx,.txt,.png,.jpg,.jpeg,.webp,.gif"
+                >
+              </div>
+              <div class="alert alert-danger py-2 px-3 small mt-2 mb-0 d-none" id="noteAttachmentError" role="alert"></div>
+              <div class="attachment-list mt-2" id="noteEditorAttachmentsList"></div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-outline-accent" data-bs-dismiss="modal">Cancel</button>
+            <button type="submit" class="btn btn-accent" id="noteSubmitBtn">Save Note</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Add / Edit Goal Modal -->
+  <div class="modal fade" id="goalModal" tabindex="-1" aria-labelledby="goalModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+      <div class="modal-content modal-surface">
+        <div class="modal-header">
+          <h2 class="modal-title fs-6 fw-bold" id="goalModalLabel">Add Academic Goal</h2>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <form id="goalForm">
+          <input type="hidden" id="goalId" value="">
+          <div class="modal-body">
+            <div class="mb-3">
+              <label for="goalTitle" class="form-label">Goal Title</label>
+              <input type="text" class="form-control" id="goalTitle" placeholder="e.g., Complete Algorithms Syllabus" required>
+            </div>
+            <div class="mb-3">
+              <label for="goalDescription" class="form-label">Description <span class="text-muted fw-normal">(optional)</span></label>
+              <textarea class="form-control" id="goalDescription" rows="2" placeholder="Describe milestones or target outcomes..."></textarea>
+            </div>
+            <div class="row g-3 mb-3">
+              <div class="col-12 col-sm-6">
+                <label for="goalCategory" class="form-label">Category</label>
+                <select class="form-select" id="goalCategory" required>
+                  <option value="Syllabus">Complete Syllabus</option>
+                  <option value="Study Hours">Study Hours</option>
+                  <option value="Assignments">Assignments</option>
+                  <option value="Programming">Learn Programming</option>
+                  <option value="Exam Prep">Exam Preparation</option>
+                  <option value="Personal">Personal</option>
+                </select>
+              </div>
+              <div class="col-12 col-sm-6">
+                <label for="goalPriority" class="form-label">Priority</label>
+                <select class="form-select" id="goalPriority" required>
+                  <option value="Low">Low</option>
+                  <option value="Medium" selected>Medium</option>
+                  <option value="High">High</option>
+                  <option value="Urgent">Urgent</option>
+                </select>
+              </div>
+            </div>
+            <div class="row g-3 mb-3">
+              <div class="col-6">
+                <label for="goalStartDate" class="form-label">Start Date</label>
+                <input type="date" class="form-control" id="goalStartDate" required>
+              </div>
+              <div class="col-6">
+                <label for="goalTargetDate" class="form-label">Target Date</label>
+                <input type="date" class="form-control" id="goalTargetDate" required>
+              </div>
+            </div>
+            <div class="row g-3">
+              <div class="col-6">
+                <label for="goalTargetValue" class="form-label">Target Value</label>
+                <input type="number" class="form-control" id="goalTargetValue" min="1" value="10" required>
+              </div>
+              <div class="col-6">
+                <label for="goalCurrentValue" class="form-label">Current Progress</label>
+                <input type="number" class="form-control" id="goalCurrentValue" min="0" value="0" required>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-outline-accent" data-bs-dismiss="modal">Cancel</button>
+            <button type="submit" class="btn btn-accent" id="goalSubmitBtn">Save Goal</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Add Habit Modal -->
+  <div class="modal fade" id="habitModal" tabindex="-1" aria-labelledby="habitModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content modal-surface">
+        <div class="modal-header">
+          <h2 class="modal-title fs-6 fw-bold" id="habitModalLabel">Add Daily Habit</h2>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <form id="habitForm">
+          <div class="modal-body">
+            <div class="mb-3">
+              <label for="habitTitle" class="form-label">Habit Name</label>
+              <input type="text" class="form-control" id="habitTitle" placeholder="e.g., Study daily, Exercise, Read, Revise" required>
+            </div>
+            <div>
+              <label for="habitCategory" class="form-label">Category</label>
+              <select class="form-select" id="habitCategory" required>
+                <option value="Study">Study</option>
+                <option value="Revision">Revision</option>
+                <option value="Reading">Reading</option>
+                <option value="Exercise">Exercise</option>
+                <option value="Sleep">Sleep &amp; Wellness</option>
+              </select>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-outline-accent" data-bs-dismiss="modal">Cancel</button>
+            <button type="submit" class="btn btn-accent">Save Habit</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Add / Edit Subject Modal -->
+  <div class="modal fade" id="subjectModal" tabindex="-1" aria-labelledby="subjectModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+      <div class="modal-content modal-surface">
+        <div class="modal-header">
+          <h2 class="modal-title fs-6 fw-bold" id="subjectModalLabel">Add Subject</h2>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <form id="subjectForm">
+          <input type="hidden" id="subjectId" value="">
+          <div class="modal-body">
+            <div class="row g-3 mb-3">
+              <div class="col-12 col-sm-8">
+                <label for="subjectName" class="form-label">Subject Name</label>
+                <input type="text" class="form-control" id="subjectName" placeholder="e.g., Data Structures &amp; Algorithms" required>
+              </div>
+              <div class="col-12 col-sm-4">
+                <label for="subjectCode" class="form-label">Subject Code</label>
+                <input type="text" class="form-control" id="subjectCode" placeholder="e.g., CS 301" required>
+              </div>
+            </div>
+            <div class="row g-3 mb-3">
+              <div class="col-12 col-sm-6">
+                <label for="subjectTeacher" class="form-label">Teacher</label>
+                <input type="text" class="form-control" id="subjectTeacher" placeholder="e.g., Prof. Sarah Lin" required>
+              </div>
+              <div class="col-12 col-sm-6">
+                <label for="subjectSemester" class="form-label">Semester</label>
+                <input type="text" class="form-control" id="subjectSemester" placeholder="e.g., Fall 2026" required>
+              </div>
+            </div>
+            <div class="row g-3 mb-3">
+              <div class="col-4">
+                <label for="subjectCredits" class="form-label">Credits</label>
+                <input type="number" class="form-control" id="subjectCredits" min="1" max="12" value="3" required>
+              </div>
+              <div class="col-4">
+                <label for="subjectTargetGrade" class="form-label">Target Grade</label>
+                <input type="text" class="form-control" id="subjectTargetGrade" placeholder="e.g., A" required>
+              </div>
+              <div class="col-4">
+                <label for="subjectColor" class="form-label">Color</label>
+                <select class="form-select" id="subjectColor" required>
+                  <option value="#4f46e5">Indigo</option>
+                  <option value="#10b981">Emerald</option>
+                  <option value="#0ea5e9">Sky Blue</option>
+                  <option value="#8b5cf6">Violet</option>
+                  <option value="#f59e0b">Amber</option>
+                  <option value="#ef4444">Rose</option>
+                </select>
+              </div>
+            </div>
+            <div>
+              <label for="subjectDescription" class="form-label">Description <span class="text-muted fw-normal">(optional)</span></label>
+              <textarea class="form-control" id="subjectDescription" rows="2" placeholder="Syllabus overview, lab details, or grading weights..."></textarea>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-outline-accent" data-bs-dismiss="modal">Cancel</button>
+            <button type="submit" class="btn btn-accent" id="subjectSubmitBtn">Save Subject</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Add Assessment Modal -->
+  <div class="modal fade" id="assessmentModal" tabindex="-1" aria-labelledby="assessmentModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content modal-surface">
+        <div class="modal-header">
+          <h2 class="modal-title fs-6 fw-bold" id="assessmentModalLabel">Add Assessment Marks</h2>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <form id="assessmentForm">
+          <input type="hidden" id="assessmentSubjectId" value="">
+          <div class="modal-body">
+            <div class="mb-3">
+              <label for="assessmentName" class="form-label">Assessment Name</label>
+              <input type="text" class="form-control" id="assessmentName" placeholder="e.g., Midterm Exam, Quiz 1, Lab Project" required>
+            </div>
+            <div class="row g-3 mb-3">
+              <div class="col-6">
+                <label for="assessmentMarksObtained" class="form-label">Marks Obtained</label>
+                <input type="number" class="form-control" id="assessmentMarksObtained" min="0" step="0.5" required>
+              </div>
+              <div class="col-6">
+                <label for="assessmentMaxMarks" class="form-label">Maximum Marks</label>
+                <input type="number" class="form-control" id="assessmentMaxMarks" min="1" step="0.5" value="100" required>
+              </div>
+            </div>
+            <div>
+              <label for="assessmentDate" class="form-label">Assessment Date</label>
+              <input type="date" class="form-control" id="assessmentDate" required>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-outline-accent" data-bs-dismiss="modal">Cancel</button>
+            <button type="submit" class="btn btn-accent">Save Assessment</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Import Data Confirmation Modal -->
+  <div class="modal fade" id="importConfirmModal" tabindex="-1" aria-labelledby="importConfirmModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content modal-surface">
+        <div class="modal-header">
+          <h2 class="modal-title fs-6 fw-bold" id="importConfirmModalLabel">Confirm Data Import</h2>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <p class="small text-secondary mb-2">
+            Importing this backup will replace your current workspace data. We recommend exporting a backup first.
+          </p>
+          <div class="p-2 rounded border small" id="importPreviewSummary"></div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline-accent btn-sm" id="backupBeforeImportBtn">
+            <i class="bi bi-download"></i> Backup First
+          </button>
+          <button type="button" class="btn btn-outline-accent btn-sm" data-bs-dismiss="modal">Cancel</button>
+          <button type="button" class="btn btn-accent btn-sm" id="confirmImportBtn">Confirm Import</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Clear All Data Confirmation Modal -->
+  <div class="modal fade" id="clearDataModal" tabindex="-1" aria-labelledby="clearDataModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content modal-surface">
+        <div class="modal-header">
+          <h2 class="modal-title fs-6 fw-bold text-danger" id="clearDataModalLabel">Clear All Application Data</h2>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <p class="mb-0 text-secondary">
+            This will permanently delete all tasks, subjects, deadlines, events, timetable classes, notes, goals, habits, and study sessions from LocalStorage.
+          </p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline-accent btn-sm" id="backupBeforeClearBtn">
+            <i class="bi bi-download"></i> Export Backup First
+          </button>
+          <button type="button" class="btn btn-outline-accent btn-sm" data-bs-dismiss="modal">Cancel</button>
+          <button type="button" class="btn btn-danger btn-sm" id="confirmClearDataBtn">Yes, Clear All Data</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- Delete Note Confirmation Modal -->
+  <div class="modal fade" id="deleteNoteModal" tabindex="-1" aria-labelledby="deleteNoteModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-sm">
+      <div class="modal-content modal-surface">
+        <div class="modal-header">
+          <h2 class="modal-title fs-6 fw-bold" id="deleteNoteModalLabel">Delete Note</h2>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <p class="mb-0 text-secondary">
+            Delete <strong id="deleteNoteName">this note</strong> and its attached files?
+          </p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline-accent btn-sm" data-bs-dismiss="modal">Cancel</button>
+          <button type="button" class="btn btn-danger btn-sm" id="confirmDeleteNoteBtn">Delete</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Attachment Preview Modal (Images & PDFs) -->
+  <div class="modal fade" id="attachmentPreviewModal" tabindex="-1" aria-labelledby="previewModalTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-xl">
+      <div class="modal-content modal-surface">
+        <div class="modal-header">
+          <h2 class="modal-title fs-6 fw-bold text-truncate pe-3" id="previewModalTitle">Attachment Preview</h2>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body text-center" id="previewModalBody"></div>
+        <div class="modal-footer" id="previewModalFooter"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Dynamic Datalist for Stored Subjects -->
+  <datalist id="subjectSuggestions"></datalist>
+
+  <!-- Bootstrap 5.3 JS Bundle via CDN -->
+  <script
+    src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+    crossorigin="anonymous"
+  ></script>
+
+  <!-- Application Script -->
+  <script src="js/app.js"></script>
+</body>
+</html>
